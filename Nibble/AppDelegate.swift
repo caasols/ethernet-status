@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusBarItem.button {
-            button.image = NSImage(systemSymbolName: "network", accessibilityDescription: "Ethernet Status")
+            button.image = NSImage(systemSymbolName: "network", accessibilityDescription: "Nibble")
             button.action = #selector(togglePopover)
             button.target = self
         }

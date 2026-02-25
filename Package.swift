@@ -2,25 +2,25 @@
 import PackageDescription
 
 let package = Package(
-    name: "EthernetStatus",
+    name: "Nibble",
     platforms: [.macOS(.v12)],
     products: [
-        .executable(name: "EthernetStatus", targets: ["EthernetStatus"])
+        .executable(name: "Nibble", targets: ["Nibble"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-testing.git", from: "0.6.0")
     ],
     targets: [
         .executableTarget(
-            name: "EthernetStatus",
+            name: "Nibble",
             dependencies: [],
-            path: "EthernetStatus",
+            path: "Nibble",
             exclude: ["Resources"]
         ),
         .testTarget(
-            name: "EthernetStatusTests",
+            name: "NibbleTests",
             dependencies: [
-                "EthernetStatus",
+                "Nibble",
                 .product(name: "Testing", package: "swift-testing")
             ]
         )

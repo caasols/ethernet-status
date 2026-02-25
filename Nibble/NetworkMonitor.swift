@@ -21,7 +21,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     private var monitor: NWPathMonitor?
     private var timer: Timer?
     var cancellables = Set<AnyCancellable>()
-    private let workerQueue = DispatchQueue(label: "com.ethernetstatus.monitor", qos: .utility)
+    private let workerQueue = DispatchQueue(label: "com.nibble.monitor", qos: .utility)
     private var currentRefreshInterval: TimeInterval = 30
     private let settings: AppSettings
     

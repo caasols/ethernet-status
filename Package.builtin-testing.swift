@@ -2,22 +2,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "EthernetStatus",
+    name: "Nibble",
     platforms: [.macOS(.v12)],
     products: [
-        .executable(name: "EthernetStatus", targets: ["EthernetStatus"])
+        .executable(name: "Nibble", targets: ["Nibble"])
     ],
     dependencies: [],
     targets: [
         .executableTarget(
-            name: "EthernetStatus",
+            name: "Nibble",
             dependencies: [],
-            path: "EthernetStatus",
+            path: "Nibble",
             exclude: ["Resources"]
         ),
         .testTarget(
-            name: "EthernetStatusTests",
-            dependencies: ["EthernetStatus"]
+            name: "NibbleTests",
+            dependencies: ["Nibble"]
         )
     ]
 )
