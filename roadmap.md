@@ -4,8 +4,8 @@ This roadmap merges the original refactor priorities with feature-parity insight
 
 ## Current Status
 
-- Completed: **1**, **2**, **3**, **4**
-- Missing / next in queue: **5** through **14**
+- Completed: **1**, **2**, **3**, **4**, **5**
+- Missing / next in queue: **6** through **14**
 
 ## Priority Order
 
@@ -26,7 +26,7 @@ This roadmap merges the original refactor priorities with feature-parity insight
    - Reflect Active / Inactive / Disconnected states in iconography.
    - Preserve clear at-a-glance semantics for route-active vs merely plugged-in ethernet.
 
-5. **Refactor `NetworkMonitor` into focused services**
+5. **Refactor `NetworkMonitor` into focused services** *(done)*
    - Split responsibilities into interface provider, connection evaluator, public IP provider, and orchestrator.
    - Improve testability and reduce state coupling.
 
