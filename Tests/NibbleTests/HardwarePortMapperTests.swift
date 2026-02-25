@@ -1,5 +1,5 @@
 import Testing
-@testable import EthernetStatus
+@testable import Nibble
 
 struct HardwarePortMapperTests {
     @Test func parseMapsKnownHardwarePorts() {

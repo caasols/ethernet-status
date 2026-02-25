@@ -5,15 +5,15 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>EthernetStatus</string>
+    <string>Nibble</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.ethernetstatus.app</string>
+    <string>com.caasols.nibble</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>EthernetStatus</string>
+    <string>Nibble</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -40,6 +40,6 @@
         </dict>
     </dict>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright 2026 Ethernet Status Contributors</string>
+    <string>Copyright 2026 Nibble Contributors</string>
 </dict>
 </plist>

@@ -16,7 +16,7 @@ struct AboutView: View {
                 .font(.system(size: 64))
                 .foregroundColor(.accentColor)
             
-            Text("Ethernet Status")
+            Text("Nibble")
                 .font(.title)
                 .fontWeight(.bold)
             
@@ -32,8 +32,8 @@ struct AboutView: View {
             Divider()
             
             VStack(spacing: 8) {
-                Link("GitHub Repository", destination: URL(string: "https://github.com/yourusername/EthernetStatus")!)
-                Link("Report an Issue", destination: URL(string: "https://github.com/yourusername/EthernetStatus/issues")!)
+                Link("GitHub Repository", destination: URL(string: "https://github.com/caasols/nibble")!)
+                Link("Report an Issue", destination: URL(string: "https://github.com/caasols/nibble/issues")!)
             }
             
             Spacer()

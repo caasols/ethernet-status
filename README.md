@@ -1,8 +1,8 @@
-# Ethernet Status
+# Nibble
 
-An open source macOS menu bar application for monitoring Ethernet connections and network interfaces.
+Nibble sits quietly in your menubar, watching your ethernet so you don't have to. Open-source, no bloat, just the connection info you actually need.
 
-![Ethernet Status Screenshot](screenshot.png)
+![Nibble Screenshot](screenshot.png)
 
 ## Features
 
@@ -23,24 +23,24 @@ An open source macOS menu bar application for monitoring Ethernet connections an
 
 ### Download Pre-built App
 
-1. Go to the [Releases](https://github.com/yourusername/EthernetStatus/releases) page
+1. Go to the [Releases](https://github.com/caasols/nibble/releases) page
 2. Download the latest release
-3. Drag `EthernetStatus.app` to your Applications folder
+3. Drag `Nibble.app` to your Applications folder
 4. Launch the app
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/yourusername/EthernetStatus.git
-cd EthernetStatus
-xcodebuild -scheme EthernetStatus -configuration Release
+git clone https://github.com/caasols/nibble.git
+cd nibble
+xcodebuild -scheme Nibble -configuration Release
 ```
 
-The built app will be in `build/Release/EthernetStatus.app`
+The built app will be in `build/Release/Nibble.app`
 
 ## Usage
 
-Once launched, Ethernet Status will appear in your menu bar. Click the icon to:
+Once launched, Nibble will appear in your menu bar. Click the icon to:
 
 - View Ethernet connection status
 - See your public IP address
@@ -53,9 +53,9 @@ Once launched, Ethernet Status will appear in your menu bar. Click the icon to:
 ### Project Structure
 
 ```
-EthernetStatus/
-├── EthernetStatus/
-│   ├── EthernetStatusApp.swift    # App entry point
+nibble/
+├── Nibble/
+│   ├── NibbleApp.swift            # App entry point
 │   ├── AppDelegate.swift          # Menu bar setup
 │   ├── Views/
 │   │   ├── ContentView.swift      # Main menu view
@@ -101,7 +101,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Inspired by the original Ethernet Status app
+- Inspired by the original wired-status menu bar workflow
 - Built with SwiftUI and Combine
 - Uses native macOS networking APIs
 
@@ -109,8 +109,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you encounter any issues or have questions:
 
-- Open an [issue](https://github.com/yourusername/EthernetStatus/issues)
-- Join discussions on [GitHub Discussions](https://github.com/yourusername/EthernetStatus/discussions)
+- Open an [issue](https://github.com/caasols/nibble/issues)
+- Join discussions on [GitHub Discussions](https://github.com/caasols/nibble/discussions)
 
 ## Roadmap
 

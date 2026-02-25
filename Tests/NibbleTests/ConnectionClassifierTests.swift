@@ -1,5 +1,5 @@
 import Testing
-@testable import EthernetStatus
+@testable import Nibble
 
 struct ConnectionClassifierTests {
     @Test func hasWiredConnectionReturnsTrueForActiveEthernet() {

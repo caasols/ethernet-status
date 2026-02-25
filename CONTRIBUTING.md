@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for contributing to Ethernet Status.
+Thanks for contributing to Nibble.
 
 ## Development Setup
 

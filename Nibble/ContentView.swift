@@ -145,7 +145,7 @@ struct MenuItemsView: View {
                 showingAbout = true
             }) {
                 HStack {
-                    Text("About Ethernet Status")
+                    Text("About Nibble")
                         .font(.system(size: 13))
                     Spacer()
                     Text("v1.0.0")

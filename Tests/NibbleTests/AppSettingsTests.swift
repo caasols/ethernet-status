@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import EthernetStatus
+@testable import Nibble
 
 struct AppSettingsTests {
     @Test func defaultsAreAppliedWhenNoValuesExist() {

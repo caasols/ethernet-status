@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Building Ethernet Status..."
+echo "Building Nibble..."
 
 # Navigate to project directory
 cd "$(dirname "$0")"
@@ -19,7 +19,7 @@ swift build -c release
 
 # Create app bundle
 echo "Creating app bundle..."
-APP_NAME="EthernetStatus"
+APP_NAME="Nibble"
 BUNDLE_NAME="${APP_NAME}.app"
 BUILD_DIR=".build/release"
 
