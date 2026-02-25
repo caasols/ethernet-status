@@ -17,6 +17,8 @@ GitHub Actions defines two lanes in `.github/workflows/ci.yml`:
 - `stable-build-and-test` (required): uses current package manifest and must pass for merges.
 - `builtin-testing-probe` (non-blocking): swaps to `Package.builtin-testing.swift` to track readiness for removing the temporary `swift-testing` dependency.
 
+For branch protection verification, open a PR to `main` and confirm only `stable-build-and-test` is required.
+
 ## Pull Request Expectations
 
 - Keep PRs focused and small when possible.
