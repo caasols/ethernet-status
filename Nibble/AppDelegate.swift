@@ -22,7 +22,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusBarItem.button {
-            button.image = NSImage(systemSymbolName: "network", accessibilityDescription: "Nibble")
+            let initialDescriptor = MenuBarIconDescriptor.forConnectionState(networkMonitor.connectionState)
+            button.image = NSImage(
+                systemSymbolName: initialDescriptor.systemSymbolName,
+                accessibilityDescription: initialDescriptor.accessibilityDescription
+            )
             button.action = #selector(togglePopover)
             button.target = self
         }
@@ -71,15 +75,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     }
     
     func updateMenuBarIcon() {
-        networkMonitor.$isEthernetConnected
+        networkMonitor.$connectionState
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isConnected in
+            .sink { [weak self] connectionState in
                 if let button = self?.statusBarItem.button {
-                    if isConnected {
-                        button.image = NSImage(systemSymbolName: "network.badge.shield.half.filled", accessibilityDescription: "Ethernet Connected")
-                    } else {
-                        button.image = NSImage(systemSymbolName: "network.slash", accessibilityDescription: "Ethernet Not Connected")
-                    }
+                    let descriptor = MenuBarIconDescriptor.forConnectionState(connectionState)
+                    button.image = NSImage(
+                        systemSymbolName: descriptor.systemSymbolName,
+                        accessibilityDescription: descriptor.accessibilityDescription
+                    )
                 }
             }
             .store(in: &cancellables)
