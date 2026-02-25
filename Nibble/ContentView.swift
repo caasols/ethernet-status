@@ -38,15 +38,37 @@ struct ContentView: View {
 struct ConnectionStatusView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @EnvironmentObject var settings: AppSettings
+
+    private var statusText: String {
+        switch networkMonitor.connectionState {
+        case .active:
+            return "Connected (Active)"
+        case .inactive:
+            return "Connected (Inactive)"
+        case .disconnected:
+            return "Disconnected"
+        }
+    }
+
+    private var statusColor: Color {
+        switch networkMonitor.connectionState {
+        case .active:
+            return .green
+        case .inactive:
+            return .orange
+        case .disconnected:
+            return .red
+        }
+    }
     
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Wired Connection:")
+                Text("Wired Status:")
                     .font(.system(size: 13, weight: .medium))
-                Text(networkMonitor.isEthernetConnected ? "Connected" : "Not Connected")
+                Text(statusText)
                     .font(.system(size: 13))
-                    .foregroundColor(networkMonitor.isEthernetConnected ? .green : .red)
+                    .foregroundColor(statusColor)
                 Spacer()
             }
             .padding(.horizontal, 16)

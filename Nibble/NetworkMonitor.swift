@@ -15,6 +15,7 @@ struct NetworkInterface: Identifiable {
 
 final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     @Published var isEthernetConnected: Bool = false
+    @Published var connectionState: EthernetConnectionState = .disconnected
     @Published var publicIP: String?
     @Published var interfaces: [NetworkInterface] = []
     
@@ -27,6 +28,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     
     // Cache for hardware port mappings
     private var hardwarePortMap: [String: String] = [:]
+    private var latestPathUsesWiredEthernet = false
 
     init(settings: AppSettings) {
         self.settings = settings
@@ -35,10 +37,12 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     func startMonitoring() {
         // Monitor network path changes
         monitor = NWPathMonitor()
-        monitor?.pathUpdateHandler = { [weak self] _ in
-            self?.refreshNetworkState()
+        monitor?.pathUpdateHandler = { [weak self] path in
+            guard let self = self else { return }
+            self.latestPathUsesWiredEthernet = path.usesInterfaceType(.wiredEthernet)
+            self.refreshNetworkState()
         }
-        monitor?.start(queue: DispatchQueue.global(qos: .background))
+        monitor?.start(queue: workerQueue)
 
         settings.$refreshInterval
             .removeDuplicates()
@@ -121,11 +125,15 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
                 !interface.name.starts(with: "llw") &&
                 !interface.name.starts(with: "utun")
             }
-            let wiredConnected = ConnectionClassifier.hasWiredConnection(in: currentInterfaces)
+            let state = ConnectionStateEvaluator.evaluate(
+                interfaces: currentInterfaces,
+                pathUsesWiredEthernet: self.latestPathUsesWiredEthernet
+            )
 
             DispatchQueue.main.async {
                 self.interfaces = visibleInterfaces
-                self.isEthernetConnected = wiredConnected
+                self.connectionState = state
+                self.isEthernetConnected = state.isConnected
             }
         }
     }
