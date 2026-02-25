@@ -4,8 +4,8 @@ This roadmap merges the original refactor priorities with feature-parity insight
 
 ## Current Status
 
-- Completed: **1**, **2**, **3**
-- Missing / next in queue: **4** through **14**
+- Completed: **1**, **2**, **3**, **4**
+- Missing / next in queue: **5** through **14**
 
 ## Priority Order
 
@@ -22,7 +22,7 @@ This roadmap merges the original refactor priorities with feature-parity insight
    - Derive `interfaces` and global status from the same snapshot.
    - Merge MAC/IP/type data consistently and deterministically.
 
-4. **Adopt 3-state menubar icon behavior**
+4. **Adopt 3-state menubar icon behavior** *(done)*
    - Reflect Active / Inactive / Disconnected states in iconography.
    - Preserve clear at-a-glance semantics for route-active vs merely plugged-in ethernet.
 
