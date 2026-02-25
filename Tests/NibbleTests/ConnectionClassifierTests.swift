@@ -61,4 +61,20 @@ struct ConnectionClassifierTests {
             #expect(!ConnectionClassifier.hasWiredConnection(in: interfaces))
         }
     }
+
+    @Test func hasWiredConnectionPrefersAuthoritativeMediumOverTypeLabel() {
+        let interfaces = [
+            NetworkInterface(name: "en9", displayName: "Dock", hardwareAddress: nil, isActive: true, addresses: [], type: "Unknown", medium: .wired)
+        ]
+
+        #expect(ConnectionClassifier.hasWiredConnection(in: interfaces))
+    }
+
+    @Test func hasWiredConnectionDoesNotMisclassifyWhenMediumSaysWiFi() {
+        let interfaces = [
+            NetworkInterface(name: "en0", displayName: "Wi-Fi", hardwareAddress: nil, isActive: true, addresses: [], type: "USB-C Ethernet Adapter", medium: .wiFi)
+        ]
+
+        #expect(!ConnectionClassifier.hasWiredConnection(in: interfaces))
+    }
 }

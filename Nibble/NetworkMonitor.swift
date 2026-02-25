@@ -11,6 +11,28 @@ struct NetworkInterface: Identifiable {
     let isActive: Bool
     var addresses: [String]
     let type: String
+    let medium: InterfaceMedium
+    let classificationConfidence: InterfaceClassificationConfidence
+
+    init(
+        name: String,
+        displayName: String,
+        hardwareAddress: String?,
+        isActive: Bool,
+        addresses: [String],
+        type: String,
+        medium: InterfaceMedium = .unknown,
+        classificationConfidence: InterfaceClassificationConfidence = .low
+    ) {
+        self.name = name
+        self.displayName = displayName
+        self.hardwareAddress = hardwareAddress
+        self.isActive = isActive
+        self.addresses = addresses
+        self.type = type
+        self.medium = medium
+        self.classificationConfidence = classificationConfidence
+    }
 }
 
 final class NetworkMonitor: ObservableObject, @unchecked Sendable {
@@ -28,6 +50,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     
     // Cache for hardware port mappings
     private var hardwarePortMap: [String: String] = [:]
+    private var authoritativeMetadata: [String: InterfaceClassification] = [:]
     private var latestPathUsesWiredEthernet = false
 
     init(settings: AppSettings) {
@@ -118,6 +141,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             guard let self = self else { return }
 
             self.buildHardwarePortMap()
+            self.authoritativeMetadata = InterfaceMetadataResolver.authoritativeMetadataByBSDName()
             let currentInterfaces = self.getNetworkInterfaces()
             let visibleInterfaces = currentInterfaces.filter { interface in
                 !interface.name.starts(with: "lo") &&
@@ -209,7 +233,13 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             }
             
             // Determine type from hardware port mapping
-            let type = hardwarePortMap[name] ?? getFallbackInterfaceType(name: name)
+            let classification = authoritativeMetadata[name] ?? InterfaceMetadataResolver.classify(
+                bsdName: name,
+                systemType: nil,
+                displayName: nil,
+                fallbackTypeName: hardwarePortMap[name] ?? getFallbackInterfaceType(name: name)
+            )
+            let type = displayTypeName(for: classification.medium)
             
             // Check if interface already exists
             if let existingIndex = interfaces.firstIndex(where: { $0.name == name }) {
@@ -220,11 +250,13 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             } else {
                 let networkInterface = NetworkInterface(
                     name: name,
-                    displayName: hardwarePortMap[name] ?? name,
+                    displayName: classification.displayName,
                     hardwareAddress: hardwareAddress,
                     isActive: isActive,
                     addresses: addresses,
-                    type: type
+                    type: type,
+                    medium: classification.medium,
+                    classificationConfidence: classification.confidence
                 )
                 interfaces.append(networkInterface)
             }
@@ -249,6 +281,27 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             return "Unknown"
         }
         return "Unknown"
+    }
+
+    private func displayTypeName(for medium: InterfaceMedium) -> String {
+        switch medium {
+        case .wired:
+            return "Ethernet"
+        case .wiFi:
+            return "Wi-Fi"
+        case .vpn:
+            return "VPN"
+        case .bridge:
+            return "Bridge"
+        case .loopback:
+            return "Loopback"
+        case .awdl:
+            return "AWDL"
+        case .bluetooth:
+            return "Bluetooth"
+        case .unknown:
+            return "Unknown"
+        }
     }
 
 }

@@ -7,6 +7,14 @@ enum ConnectionClassifier {
                 return false
             }
 
+            if interface.medium == .wired {
+                return true
+            }
+
+            if interface.medium != .unknown {
+                return false
+            }
+
             let identity = [interface.type, interface.displayName, interface.name]
                 .joined(separator: " ")
                 .lowercased()
