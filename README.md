@@ -50,6 +50,13 @@ Once launched, Nibble will appear in your menu bar. Click the icon to:
 - Access preferences
 - Set the app to open at login
 
+## Public IP Privacy Transparency
+
+- Public IP lookups are optional and controlled by `Show Public IP Address` in Preferences.
+- When enabled, Nibble requests the public IP from `api.ipify.org` over HTTPS.
+- Requests occur at startup, when the setting is enabled, and on each refresh cycle.
+- When disabled, Nibble does not request the public IP.
+
 ## Development
 
 ### Project Structure

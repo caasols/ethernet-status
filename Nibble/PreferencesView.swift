@@ -19,7 +19,17 @@ struct PreferencesView: View {
             Divider()
             
             VStack(alignment: .leading, spacing: 16) {
-                Toggle("Show Public IP Address", isOn: $settings.showPublicIP)
+                VStack(alignment: .leading, spacing: 6) {
+                    Toggle("Show Public IP Address", isOn: $settings.showPublicIP)
+
+                    Text(settings.publicIPTransparencySummary)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("Provider: \(settings.publicIPProviderHost) over HTTPS. Public IP display is optional and can be changed anytime.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("App Mode")
@@ -51,6 +61,6 @@ struct PreferencesView: View {
             Spacer()
         }
         .padding()
-        .frame(width: 400, height: 250)
+        .frame(width: 440, height: 300)
     }
 }

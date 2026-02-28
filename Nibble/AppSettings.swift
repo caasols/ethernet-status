@@ -30,6 +30,18 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    var publicIPProviderHost: String {
+        "api.ipify.org"
+    }
+
+    var publicIPTransparencySummary: String {
+        if showPublicIP {
+            return "Nibble requests your public IP from \(publicIPProviderHost) at launch, when enabled, and every \(refreshInterval) seconds during refresh. Turn this off to stop public IP requests."
+        }
+
+        return "Public IP lookups are off. Nibble does not request your public IP unless you enable this setting."
+    }
+
     private let userDefaults: UserDefaults
 
     init(userDefaults: UserDefaults = .standard) {
