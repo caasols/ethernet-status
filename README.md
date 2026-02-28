@@ -7,13 +7,17 @@ Nibble sits quietly in your menubar, watching your ethernet so you don't have to
 ## Features
 
 - Real-time Ethernet connection status monitoring
+- Instantaneous download/upload speed display (live throughput, not speedtest max)
 - Public IP address display
 - Network interface listing (en0, en1, en6, etc.)
 - Detailed interface information (MAC address, IP addresses, status)
-- "Open at Login" functionality
+- Preferences panel for app-level controls (open at login, updates, diagnostics, feedback, about)
 - Periodic and manual update checks against official releases
 - One-click diagnostics export with sanitized defaults
 - In-app feedback form with optional diagnostics preview
+- One-click DNS cache flush utility
+- One-click Wi-Fi refresh utility (immediate toggle)
+- English and Spanish localization support
 - Clean, native macOS UI
 - Lightweight and efficient
 
@@ -48,10 +52,10 @@ The built app will be in `build/Release/Nibble.app`
 Once launched, Nibble will appear in your menu bar. Click the icon to:
 
 - View Ethernet connection status
+- View instantaneous network speed (down/up)
 - See your public IP address
 - Browse network interfaces
-- Access preferences
-- Set the app to open at login
+- Access Preferences for updates, diagnostics, feedback, about, and startup behavior
 
 ## Public IP Privacy Transparency
 
@@ -79,7 +83,7 @@ For the internal telemetry governance map, see `docs/telemetry-map.md`.
 ## Update Checks
 
 - Nibble checks for updates periodically using the official GitHub releases endpoint.
-- You can run an on-demand check from the menu or Preferences.
+- You can run an on-demand check from Preferences.
 - Before opening a download page, Nibble prompts for confirmation and shows release notes.
 
 ## Diagnostics Export
@@ -101,17 +105,19 @@ For the internal telemetry governance map, see `docs/telemetry-map.md`.
 ```
 nibble/
 ├── Nibble/
-│   ├── NibbleApp.swift            # App entry point
-│   ├── AppDelegate.swift          # Menu bar setup
-│   ├── Views/
-│   │   ├── ContentView.swift      # Main menu view
-│   │   ├── InterfaceDetailView.swift
-│   │   ├── PreferencesView.swift
-│   │   └── AboutView.swift
-│   ├── Services/
-│   │   └── NetworkMonitor.swift   # Network monitoring
-│   └── Utilities/
-│       └── LoginItemManager.swift # Login item management
+│   ├── NibbleApp.swift
+│   ├── AppDelegate.swift
+│   ├── ContentView.swift
+│   ├── PreferencesView.swift
+│   ├── NetworkMonitor.swift
+│   ├── NetworkSpeedSampler.swift
+│   ├── DNSFlushService.swift
+│   ├── WiFiRefreshService.swift
+│   ├── FeedbackComposer.swift
+│   ├── DiagnosticsExportBuilder.swift
+│   └── ...
+├── Tests/NibbleTests/
+│   └── ...
 └── Package.swift
 ```
 
@@ -175,7 +181,6 @@ If you encounter any issues or have questions:
 - [ ] Remove temporary `swift-testing` package dependency once CI and local full-Xcode environments run built-in Swift Testing consistently
 - [ ] Wi-Fi status support
 - [ ] VPN connection detection
-- [ ] Network speed monitoring
-- [ ] Custom refresh intervals
-- [ ] Export network information
-- [ ] Dark mode improvements
+- [ ] Historical interface traffic and trend views
+- [ ] Preferences UX polish and structure refinement
+- [ ] Improve localization coverage across more languages
