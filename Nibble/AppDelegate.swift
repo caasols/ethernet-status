@@ -24,11 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusBarItem.button {
-            let initialDescriptor = MenuBarIconDescriptor.forConnectionState(networkMonitor.connectionState)
-            button.image = NSImage(
-                systemSymbolName: initialDescriptor.systemSymbolName,
-                accessibilityDescription: initialDescriptor.accessibilityDescription
-            )
+            updateMenuBarButton(button, for: networkMonitor.connectionState)
             button.action = #selector(togglePopover)
             button.target = self
         }
@@ -81,14 +77,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] connectionState in
                 if let button = self?.statusBarItem.button {
-                    let descriptor = MenuBarIconDescriptor.forConnectionState(connectionState)
-                    button.image = NSImage(
-                        systemSymbolName: descriptor.systemSymbolName,
-                        accessibilityDescription: descriptor.accessibilityDescription
-                    )
+                    self?.updateMenuBarButton(button, for: connectionState)
                 }
             }
             .store(in: &cancellables)
+    }
+
+    private func updateMenuBarButton(_ button: NSStatusBarButton, for state: EthernetConnectionState) {
+        let descriptor = MenuBarIconDescriptor.forConnectionState(state)
+        if let image = NSImage(
+            systemSymbolName: descriptor.systemSymbolName,
+            accessibilityDescription: descriptor.accessibilityDescription
+        ) {
+            image.isTemplate = true
+            button.image = image
+            button.title = "N"
+            button.imagePosition = .imageLeading
+        } else {
+            button.image = nil
+            button.title = "N"
+            button.imagePosition = .imageOnly
+            button.toolTip = descriptor.accessibilityDescription
+        }
     }
 
     private func applyActivationPolicy(appMode: AppSettings.AppMode) {
