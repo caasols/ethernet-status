@@ -202,89 +202,49 @@ struct MenuItemsView: View {
     @Binding var showingPreferences: Bool
     @EnvironmentObject var appDelegate: AppDelegate
 
-    private var openAtLoginBinding: Binding<Bool> {
-        Binding(
-            get: { appDelegate.loginItemController.isOpenAtLogin },
-            set: { appDelegate.loginItemController.setOpenAtLogin($0) }
-        )
+    private func trayMenuButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .font(.system(size: 13))
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Toggle(LocalizationCatalog.localized("menu.open_at_login"), isOn: openAtLoginBinding)
-                .font(.system(size: 13))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .onAppear {
-                    appDelegate.loginItemController.refreshFromSystem()
-                }
+            Divider()
+                .padding(.vertical, 8)
 
-            if let message = appDelegate.loginItemController.lastErrorMessage {
-                Text(message)
-                    .font(.system(size: 11))
-                    .foregroundColor(.red)
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 6)
-            }
-            
-            Button(action: {
-                showingPreferences = true
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.preferences"))
-                        .font(.system(size: 13))
-                    Spacer()
-                }
+            Text(LocalizationCatalog.localized("menu.quick_actions"))
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.secondary)
                 .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
+                .padding(.bottom, 4)
 
-            Button(action: {
-                appDelegate.flushDNSCache()
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.flush_dns"))
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            Button(action: {
+            trayMenuButton(LocalizationCatalog.localized("menu.refresh_wifi")) {
                 appDelegate.refreshWiFi()
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.refresh_wifi"))
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(PlainButtonStyle())
+
+            trayMenuButton(LocalizationCatalog.localized("menu.flush_dns")) {
+                appDelegate.flushDNSCache()
+            }
 
             Divider()
                 .padding(.vertical, 8)
-            
-            Button(action: {
-                NSApplication.shared.terminate(nil)
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.quit"))
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
+
+            trayMenuButton(LocalizationCatalog.localized("menu.preferences")) {
+                showingPreferences = true
             }
-            .buttonStyle(PlainButtonStyle())
+
+            trayMenuButton(LocalizationCatalog.localized("menu.quit")) {
+                NSApplication.shared.terminate(nil)
+            }
         }
     }
 }

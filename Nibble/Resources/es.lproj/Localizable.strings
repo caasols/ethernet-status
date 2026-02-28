@@ -9,15 +9,16 @@
 "common.unknown" = "Desconocido";
 "common.later" = "Mas tarde";
 
-"menu.open_at_login" = "Abrir al iniciar sesion";
+"menu.open_at_login" = "Abrir al iniciar";
 "menu.preferences" = "Preferencias...";
 "menu.check_updates" = "Buscar actualizaciones...";
 "menu.export_diagnostics" = "Exportar diagnosticos...";
+"menu.quick_actions" = "Acciones rapidas";
 "menu.flush_dns" = "Vaciar cache DNS";
 "menu.refresh_wifi" = "Refrescar Wifi";
 "menu.send_feedback" = "Enviar comentarios...";
 "menu.about" = "Acerca de Nibble";
-"menu.quit" = "Salir";
+"menu.quit" = "Salir de Nibble";
 
 "update.available.title" = "Actualizacion disponible";
 "update.available.download" = "Descargar";
