@@ -55,4 +55,26 @@ struct AppSettingsTests {
 
         #expect(settings.appMode == .menuBarOnly)
     }
+
+    @Test func publicIPTransparencySummaryIncludesProviderAndRefreshCadenceWhenEnabled() {
+        let defaults = UserDefaults(suiteName: "AppSettingsTests.publicIPTransparency.enabled")!
+        defaults.removePersistentDomain(forName: "AppSettingsTests.publicIPTransparency.enabled")
+
+        let settings = AppSettings(userDefaults: defaults)
+        settings.refreshInterval = 120
+        settings.showPublicIP = true
+
+        #expect(settings.publicIPProviderHost == "api.ipify.org")
+        #expect(settings.publicIPTransparencySummary == "Nibble requests your public IP from api.ipify.org at launch, when enabled, and every 120 seconds during refresh. Turn this off to stop public IP requests.")
+    }
+
+    @Test func publicIPTransparencySummaryStatesNoRequestsWhenDisabled() {
+        let defaults = UserDefaults(suiteName: "AppSettingsTests.publicIPTransparency.disabled")!
+        defaults.removePersistentDomain(forName: "AppSettingsTests.publicIPTransparency.disabled")
+
+        let settings = AppSettings(userDefaults: defaults)
+        settings.showPublicIP = false
+
+        #expect(settings.publicIPTransparencySummary == "Public IP lookups are off. Nibble does not request your public IP unless you enable this setting.")
+    }
 }
