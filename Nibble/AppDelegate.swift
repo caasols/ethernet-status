@@ -5,7 +5,7 @@ import Combine
 import UniformTypeIdentifiers
 
 @MainActor
-class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
+class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverDelegate {
     var statusBarItem: NSStatusItem!
     var popover: NSPopover!
     let settings: AppSettings
@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     @Published var networkMonitor: NetworkMonitor
     private let dnsFlushService: DNSFlushService
     private let wiFiRefreshService: WiFiRefreshService
+    private var popoverEventMonitor: TrayPopoverEventMonitor?
     private var cancellables = Set<AnyCancellable>()
     
     override init() {
@@ -40,12 +41,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         popover = NSPopover()
         popover.contentSize = NSSize(width: 300, height: 400)
         popover.behavior = .transient
+        popover.delegate = self
         popover.contentViewController = NSHostingController(
             rootView: ContentView()
                 .environmentObject(self)
                 .environmentObject(settings)
                 .environmentObject(updateCoordinator)
         )
+
+        popoverEventMonitor = TrayPopoverEventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] in
+            self?.popover.performClose(nil)
+        }
         
         // Setup network monitoring
         networkMonitor.startMonitoring()
@@ -87,9 +93,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             if popover.isShown {
                 popover.performClose(nil)
             } else {
+                popoverEventMonitor?.start()
                 popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
             }
         }
+    }
+
+    func popoverDidClose(_ notification: Notification) {
+        popoverEventMonitor?.stop()
     }
     
     func updateMenuBarIcon() {
@@ -242,5 +253,46 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd-HHmmss"
         return formatter.string(from: Date())
+    }
+}
+
+private final class TrayPopoverEventMonitor {
+    private let mask: NSEvent.EventTypeMask
+    private let handler: () -> Void
+    private var globalMonitor: Any?
+    private var localMonitor: Any?
+
+    init(mask: NSEvent.EventTypeMask, handler: @escaping () -> Void) {
+        self.mask = mask
+        self.handler = handler
+    }
+
+    func start() {
+        stop()
+
+        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] _ in
+            self?.handler()
+        }
+
+        localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
+            self?.handler()
+            return event
+        }
+    }
+
+    func stop() {
+        if let globalMonitor {
+            NSEvent.removeMonitor(globalMonitor)
+            self.globalMonitor = nil
+        }
+
+        if let localMonitor {
+            NSEvent.removeMonitor(localMonitor)
+            self.localMonitor = nil
+        }
+    }
+
+    deinit {
+        stop()
     }
 }
