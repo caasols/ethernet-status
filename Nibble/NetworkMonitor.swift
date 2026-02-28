@@ -2,6 +2,20 @@ import Foundation
 import Network
 import Combine
 
+enum InterfaceRouteRole: Equatable {
+    case none
+    case defaultRoute
+
+    var displayName: String {
+        switch self {
+        case .none:
+            return "None"
+        case .defaultRoute:
+            return "Default Route"
+        }
+    }
+}
+
 struct NetworkInterface: Identifiable {
     var id: String { name }
     let name: String
@@ -12,6 +26,8 @@ struct NetworkInterface: Identifiable {
     let type: String
     let medium: InterfaceMedium
     let classificationConfidence: InterfaceClassificationConfidence
+    let routeRole: InterfaceRouteRole
+    let adapterDescription: String?
 
     init(
         name: String,
@@ -21,7 +37,9 @@ struct NetworkInterface: Identifiable {
         addresses: [String],
         type: String,
         medium: InterfaceMedium = .unknown,
-        classificationConfidence: InterfaceClassificationConfidence = .low
+        classificationConfidence: InterfaceClassificationConfidence = .low,
+        routeRole: InterfaceRouteRole = .none,
+        adapterDescription: String? = nil
     ) {
         self.name = name
         self.displayName = displayName
@@ -31,6 +49,8 @@ struct NetworkInterface: Identifiable {
         self.type = type
         self.medium = medium
         self.classificationConfidence = classificationConfidence
+        self.routeRole = routeRole
+        self.adapterDescription = adapterDescription
     }
 }
 

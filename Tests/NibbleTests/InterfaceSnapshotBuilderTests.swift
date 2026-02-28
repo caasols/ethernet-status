@@ -11,7 +11,8 @@ struct InterfaceSnapshotBuilderTests {
                 isActive: false,
                 addresses: ["fe80::1"],
                 medium: .wired,
-                classificationConfidence: .low
+                classificationConfidence: .low,
+                adapterDescription: nil
             ),
             InterfaceObservation(
                 name: "en5",
@@ -20,7 +21,8 @@ struct InterfaceSnapshotBuilderTests {
                 isActive: true,
                 addresses: ["192.168.1.10", "fe80::1"],
                 medium: .wired,
-                classificationConfidence: .high
+                classificationConfidence: .high,
+                adapterDescription: "USB-C 2.5G Ethernet"
             )
         ]
 
@@ -37,6 +39,7 @@ struct InterfaceSnapshotBuilderTests {
         #expect(interface.hardwareAddress == "aa:bb:cc:dd:ee:ff")
         #expect(interface.addresses == ["192.168.1.10", "fe80::1"])
         #expect(interface.classificationConfidence == .high)
+        #expect(interface.adapterDescription == "USB-C 2.5G Ethernet")
         #expect(snapshot.connectionState == .active)
     }
 
@@ -56,5 +59,22 @@ struct InterfaceSnapshotBuilderTests {
         #expect(snapshot.allInterfaces.count == 4)
         #expect(snapshot.visibleInterfaces.map(\.name) == ["en5"])
         #expect(snapshot.connectionState == .inactive)
+    }
+
+    @Test func buildMarksDefaultRouteInterfaceRole() {
+        let observations = [
+            InterfaceObservation(name: "en0", displayName: "Wi-Fi", hardwareAddress: nil, isActive: true, addresses: ["192.168.1.2"], medium: .wiFi, classificationConfidence: .high),
+            InterfaceObservation(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["10.0.0.20"], medium: .wired, classificationConfidence: .high)
+        ]
+
+        let snapshot = InterfaceSnapshotBuilder.build(
+            observations: observations,
+            pathUsesWiredEthernet: false,
+            defaultRouteInterfaceName: "en0"
+        )
+
+        let all = Dictionary(uniqueKeysWithValues: snapshot.allInterfaces.map { ($0.name, $0) })
+        #expect(all["en0"]?.routeRole == .defaultRoute)
+        #expect(all["en5"]?.routeRole == InterfaceRouteRole.none)
     }
 }

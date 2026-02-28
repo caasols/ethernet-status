@@ -8,6 +8,27 @@ struct InterfaceObservation {
     let addresses: [String]
     let medium: InterfaceMedium
     let classificationConfidence: InterfaceClassificationConfidence
+    let adapterDescription: String?
+
+    init(
+        name: String,
+        displayName: String,
+        hardwareAddress: String?,
+        isActive: Bool,
+        addresses: [String],
+        medium: InterfaceMedium,
+        classificationConfidence: InterfaceClassificationConfidence,
+        adapterDescription: String? = nil
+    ) {
+        self.name = name
+        self.displayName = displayName
+        self.hardwareAddress = hardwareAddress
+        self.isActive = isActive
+        self.addresses = addresses
+        self.medium = medium
+        self.classificationConfidence = classificationConfidence
+        self.adapterDescription = adapterDescription
+    }
 }
 
 struct InterfaceSnapshot {
@@ -21,8 +42,15 @@ struct InterfaceSnapshot {
 }
 
 enum InterfaceSnapshotBuilder {
-    static func build(observations: [InterfaceObservation], pathUsesWiredEthernet: Bool) -> InterfaceSnapshot {
-        let mergedInterfaces = merge(observations: observations)
+    static func build(
+        observations: [InterfaceObservation],
+        pathUsesWiredEthernet: Bool,
+        defaultRouteInterfaceName: String? = nil
+    ) -> InterfaceSnapshot {
+        let mergedInterfaces = annotateRouteRole(
+            merge(observations: observations),
+            defaultRouteInterfaceName: defaultRouteInterfaceName
+        )
         let visibleInterfaces = mergedInterfaces.filter { isVisible($0.name) }
         let connectionState = ConnectionStateEvaluator.evaluate(
             interfaces: mergedInterfaces,
@@ -81,6 +109,30 @@ enum InterfaceSnapshotBuilder {
         !interfaceName.starts(with: "utun")
     }
 
+    private static func annotateRouteRole(
+        _ interfaces: [NetworkInterface],
+        defaultRouteInterfaceName: String?
+    ) -> [NetworkInterface] {
+        guard let defaultRouteInterfaceName else {
+            return interfaces
+        }
+
+        return interfaces.map { interface in
+            NetworkInterface(
+                name: interface.name,
+                displayName: interface.displayName,
+                hardwareAddress: interface.hardwareAddress,
+                isActive: interface.isActive,
+                addresses: interface.addresses,
+                type: interface.type,
+                medium: interface.medium,
+                classificationConfidence: interface.classificationConfidence,
+                routeRole: interface.name == defaultRouteInterfaceName ? .defaultRoute : .none,
+                adapterDescription: interface.adapterDescription
+            )
+        }
+    }
+
     private struct ObservationAccumulator {
         let name: String
         var displayName: String
@@ -89,6 +141,7 @@ enum InterfaceSnapshotBuilder {
         var addresses: Set<String>
         var medium: InterfaceMedium
         var classificationConfidence: InterfaceClassificationConfidence
+        var adapterDescription: String?
 
         init(_ observation: InterfaceObservation) {
             name = observation.name
@@ -98,6 +151,7 @@ enum InterfaceSnapshotBuilder {
             addresses = Set(observation.addresses)
             medium = observation.medium
             classificationConfidence = observation.classificationConfidence
+            adapterDescription = observation.adapterDescription
         }
 
         mutating func merge(with observation: InterfaceObservation) {
@@ -106,6 +160,10 @@ enum InterfaceSnapshotBuilder {
 
             if hardwareAddress == nil, let resolved = observation.hardwareAddress {
                 hardwareAddress = resolved
+            }
+
+            if adapterDescription == nil, let resolved = observation.adapterDescription {
+                adapterDescription = resolved
             }
 
             if shouldReplaceClassification(with: observation) {
@@ -124,7 +182,9 @@ enum InterfaceSnapshotBuilder {
                 addresses: addresses.sorted(),
                 type: InterfaceSnapshotBuilder.typeName(for: medium),
                 medium: medium,
-                classificationConfidence: classificationConfidence
+                classificationConfidence: classificationConfidence,
+                routeRole: .none,
+                adapterDescription: adapterDescription
             )
         }
 
