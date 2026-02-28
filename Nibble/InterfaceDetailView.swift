@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct InterfaceDetailView: View {
     let interface: NetworkInterface
@@ -22,7 +23,10 @@ struct InterfaceDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     DetailRow(label: "Name", value: interface.name)
                     DetailRow(label: "Display Name", value: interface.displayName)
-                    DetailRow(label: "Hardware Address", value: interface.hardwareAddress ?? "N/A")
+                    DetailRow(label: "Adapter", value: interface.adapterDescription ?? "Unknown")
+                    DetailRow(label: "Route Role", value: interface.routeRole.displayName)
+                    DetailRow(label: "Interface Media", value: interface.type)
+                    CopyableDetailRow(label: "Hardware Address", value: interface.hardwareAddress ?? "N/A")
                     DetailRow(label: "Status", value: interface.isActive ? "Active" : "Inactive")
                     
                     if !interface.addresses.isEmpty {
@@ -32,9 +36,7 @@ struct InterfaceDetailView: View {
                             .padding(.top, 8)
                         
                         ForEach(interface.addresses, id: \.self) { address in
-                            Text(address)
-                                .font(.system(.body, design: .monospaced))
-                                .foregroundColor(.secondary)
+                            CopyableValueRow(value: address)
                         }
                     }
                 }
@@ -56,6 +58,49 @@ struct DetailRow: View {
                 .foregroundColor(.secondary)
             Text(value)
                 .font(.body)
+        }
+    }
+}
+
+struct CopyableDetailRow: View {
+    let label: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            HStack {
+                Text(value)
+                    .font(.body)
+                    .lineLimit(1)
+                Spacer()
+                Button("Copy") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(value, forType: .string)
+                }
+                .buttonStyle(.link)
+            }
+        }
+    }
+}
+
+struct CopyableValueRow: View {
+    let value: String
+
+    var body: some View {
+        HStack {
+            Text(value)
+                .font(.system(.body, design: .monospaced))
+                .foregroundColor(.secondary)
+            Spacer()
+            Button("Copy") {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(value, forType: .string)
+            }
+            .buttonStyle(.link)
         }
     }
 }

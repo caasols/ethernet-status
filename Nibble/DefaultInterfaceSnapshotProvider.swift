@@ -3,20 +3,27 @@ import SystemConfiguration
 
 final class DefaultInterfaceSnapshotProvider: InterfaceSnapshotProviding {
     private let hardwarePortProvider: HardwarePortMappingProviding
+    private let defaultRouteProvider: DefaultRouteInterfaceProviding
     private var authoritativeMetadata: [String: InterfaceClassification] = [:]
 
-    init(hardwarePortProvider: HardwarePortMappingProviding = DefaultHardwarePortMappingProvider()) {
+    init(
+        hardwarePortProvider: HardwarePortMappingProviding = DefaultHardwarePortMappingProvider(),
+        defaultRouteProvider: DefaultRouteInterfaceProviding = DefaultRouteInterfaceProvider()
+    ) {
         self.hardwarePortProvider = hardwarePortProvider
+        self.defaultRouteProvider = defaultRouteProvider
     }
 
     func snapshot(pathUsesWiredEthernet: Bool) -> InterfaceSnapshot {
         hardwarePortProvider.refreshAsyncIfNeeded()
         let hardwarePortMap = hardwarePortProvider.currentMap()
+        let defaultRouteInterfaceName = defaultRouteProvider.currentDefaultRouteInterfaceName()
         authoritativeMetadata = InterfaceMetadataResolver.authoritativeMetadataByBSDName()
         let observations = getInterfaceObservations(hardwarePortMap: hardwarePortMap)
         return InterfaceSnapshotBuilder.build(
             observations: observations,
-            pathUsesWiredEthernet: pathUsesWiredEthernet
+            pathUsesWiredEthernet: pathUsesWiredEthernet,
+            defaultRouteInterfaceName: defaultRouteInterfaceName
         )
     }
 
@@ -80,7 +87,8 @@ final class DefaultInterfaceSnapshotProvider: InterfaceSnapshotProviding {
                     isActive: isActive,
                     addresses: addresses,
                     medium: classification.medium,
-                    classificationConfidence: classification.confidence
+                    classificationConfidence: classification.confidence,
+                    adapterDescription: classification.confidence == .high ? classification.displayName : nil
                 )
             )
 
