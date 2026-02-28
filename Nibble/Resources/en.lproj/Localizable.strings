@@ -9,15 +9,16 @@
 "common.unknown" = "Unknown";
 "common.later" = "Later";
 
-"menu.open_at_login" = "Open at Login";
+"menu.open_at_login" = "Open at Startup";
 "menu.preferences" = "Preferences...";
 "menu.check_updates" = "Check for updates...";
 "menu.export_diagnostics" = "Export Diagnostics...";
+"menu.quick_actions" = "Quick Actions";
 "menu.flush_dns" = "Flush DNS Cache";
 "menu.refresh_wifi" = "Refresh Wifi";
 "menu.send_feedback" = "Send Feedback...";
 "menu.about" = "About Nibble";
-"menu.quit" = "Quit";
+"menu.quit" = "Quit Nibble";
 
 "update.available.title" = "Update Available";
 "update.available.download" = "Download";
@@ -72,7 +73,7 @@
 "preferences.updates.help" = "Nibble checks the official GitHub releases feed periodically and can also check on demand.";
 "preferences.updates.check_now" = "Check for Updates Now";
 
-"open_at_login.error" = "Could not update Open at Login. Please try again in System Settings.";
+"open_at_login.error" = "Could not update Open at Startup. Please try again in System Settings.";
 
 "diagnostics.export.title" = "Diagnostics Export";
 "diagnostics.export.prompt" = "By default, diagnostics exclude public IP, local IP addresses, and hardware identifiers. Include sensitive identifiers only when explicitly needed for troubleshooting.";
