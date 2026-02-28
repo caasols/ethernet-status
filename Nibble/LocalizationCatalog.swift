@@ -40,7 +40,7 @@ enum LocalizationCatalog {
     }
 
     private static func candidateBundles() -> [Bundle] {
-        var bundles: [Bundle] = [Bundle.main, Bundle(for: BundleMarker.self)]
+        var bundles: [Bundle] = [Bundle.module, Bundle.main, Bundle(for: BundleMarker.self)]
 
         if let resourceURL = Bundle.main.resourceURL {
             let bundledURL = resourceURL.appendingPathComponent("Nibble_Nibble.bundle")
