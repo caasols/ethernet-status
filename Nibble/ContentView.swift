@@ -1,6 +1,19 @@
 import SwiftUI
 import AppKit
 
+private enum PopoverStyle {
+    static let panelWidth: CGFloat = 280
+    static let horizontalPadding: CGFloat = 16
+    static let rowVerticalPadding: CGFloat = 6
+    static let sectionGap: CGFloat = 8
+    static let titleFont = Font.system(size: 13, weight: .medium)
+    static let bodyFont = Font.system(size: 13)
+    static let monoBodyFont = Font.system(size: 13, design: .monospaced)
+    static let monoCaptionFont = Font.system(size: 11, design: .monospaced)
+    static let captionFont = Font.system(size: 12, weight: .medium)
+    static let feedbackFont = Font.system(size: 11, weight: .medium)
+}
+
 struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
     @EnvironmentObject var updateCoordinator: UpdateCoordinator
@@ -8,24 +21,21 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             ConnectionStatusView()
                 .padding(.top, 16)
             
             Divider()
-                .padding(.vertical, 8)
+                .padding(.vertical, PopoverStyle.sectionGap)
             
-            // Interfaces Section
             InterfacesSection()
             
             Divider()
-                .padding(.vertical, 8)
+                .padding(.vertical, PopoverStyle.sectionGap)
             
-            // Menu Items
             MenuItemsView(showingPreferences: $showingPreferences)
                 .padding(.bottom, 8)
         }
-        .frame(width: 280)
+        .frame(width: PopoverStyle.panelWidth)
         .environmentObject(appDelegate.networkMonitor)
         .sheet(isPresented: $showingPreferences) {
             PreferencesView()
@@ -95,28 +105,28 @@ struct ConnectionStatusView: View {
         VStack(spacing: 8) {
             HStack {
                 Text(LocalizationCatalog.localized("wired.status.label"))
-                    .font(.system(size: 13, weight: .medium))
+                    .font(PopoverStyle.titleFont)
                 Text(statusText)
-                    .font(.system(size: 13))
+                    .font(PopoverStyle.bodyFont)
                     .foregroundColor(statusColor)
                 Spacer()
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, PopoverStyle.horizontalPadding)
 
             HStack {
                 Text(LocalizationCatalog.localized("speed.label"))
-                    .font(.system(size: 13, weight: .medium))
+                    .font(PopoverStyle.titleFont)
                 Text(speedSummaryText)
-                    .font(.system(size: 13, design: .monospaced))
+                    .font(PopoverStyle.monoBodyFont)
                     .foregroundColor(.secondary)
                 Spacer()
             }
-            .padding(.horizontal, 16)
-             
+            .padding(.horizontal, PopoverStyle.horizontalPadding)
+              
             if settings.showPublicIP {
                 HStack {
                     Text(LocalizationCatalog.localized("public_ip.label"))
-                        .font(.system(size: 13, weight: .medium))
+                        .font(PopoverStyle.titleFont)
                     if let publicIP = networkMonitor.publicIP {
                         Button {
                             copyToClipboard(publicIP)
@@ -127,24 +137,25 @@ struct ConnectionStatusView: View {
                             }
                         } label: {
                             Text(publicIP)
-                                .font(.system(size: 13, design: .monospaced))
+                                .font(PopoverStyle.monoBodyFont)
                         }
                         .buttonStyle(.plain)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.secondary)
                         .help(LocalizationCatalog.localized("public_ip.copy_help"))
 
                         if didCopyPublicIP {
                             Text(LocalizationCatalog.localized("public_ip.copied"))
-                                .font(.system(size: 11, weight: .medium))
+                                .font(PopoverStyle.feedbackFont)
                                 .foregroundColor(.green)
                         }
                     } else {
                         Text(LocalizationCatalog.localized("common.loading"))
-                            .font(.system(size: 13, design: .monospaced))
+                            .font(PopoverStyle.monoBodyFont)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, PopoverStyle.horizontalPadding)
             }
         }
     }
@@ -156,9 +167,9 @@ struct InterfacesSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(LocalizationCatalog.localized("interfaces.title"))
-                .font(.system(size: 12, weight: .medium))
+                .font(PopoverStyle.captionFont)
                 .foregroundColor(.secondary)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, PopoverStyle.horizontalPadding)
                 .padding(.bottom, 4)
             
             ForEach(networkMonitor.interfaces) { interface in
@@ -179,9 +190,9 @@ struct InterfaceRow: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(interface.type) (\(interface.name))")
-                        .font(.system(size: 13))
+                        .font(PopoverStyle.bodyFont)
                     Text(String(format: LocalizationCatalog.localized("interface.mac"), interface.hardwareAddress ?? LocalizationCatalog.localized("common.unavailable")))
-                        .font(.system(size: 11, design: .monospaced))
+                        .font(PopoverStyle.monoCaptionFont)
                         .foregroundColor(.secondary)
                 }
                 Spacer()
@@ -189,8 +200,8 @@ struct InterfaceRow: View {
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 6)
+            .padding(.horizontal, PopoverStyle.horizontalPadding)
+            .padding(.vertical, PopoverStyle.rowVerticalPadding)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
@@ -208,39 +219,38 @@ private func copyToClipboard(_ value: String) {
 struct MenuItemsView: View {
     @Binding var showingPreferences: Bool
     @EnvironmentObject var appDelegate: AppDelegate
-    @State private var quickActionsExpanded = false
 
     private func trayMenuButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {
                 Text(title)
-                    .font(.system(size: 13))
+                    .font(PopoverStyle.bodyFont)
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 6)
+            .padding(.horizontal, PopoverStyle.horizontalPadding)
+            .padding(.vertical, PopoverStyle.rowVerticalPadding)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
     }
 
     private var quickActionsMenu: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.12)) {
-                quickActionsExpanded.toggle()
+        Menu {
+            Button(LocalizationCatalog.localized("menu.refresh_wifi")) {
+                appDelegate.refreshWiFi()
+            }
+
+            Button(LocalizationCatalog.localized("menu.flush_dns")) {
+                appDelegate.flushDNSCache()
             }
         } label: {
             HStack {
-                Image(systemName: quickActionsExpanded ? "chevron.down" : "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.secondary)
-
                 Text(LocalizationCatalog.localized("menu.quick_actions"))
-                    .font(.system(size: 13))
+                    .font(PopoverStyle.bodyFont)
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 6)
+            .padding(.horizontal, PopoverStyle.horizontalPadding)
+            .padding(.vertical, PopoverStyle.rowVerticalPadding)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
@@ -248,22 +258,7 @@ struct MenuItemsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Divider()
-                .padding(.top, 8)
-
             quickActionsMenu
-
-            if quickActionsExpanded {
-                trayMenuButton(LocalizationCatalog.localized("menu.refresh_wifi")) {
-                    appDelegate.refreshWiFi()
-                }
-
-                trayMenuButton(LocalizationCatalog.localized("menu.flush_dns")) {
-                    appDelegate.flushDNSCache()
-                }
-            }
-
-            Divider()
 
             trayMenuButton(LocalizationCatalog.localized("menu.preferences")) {
                 showingPreferences = true
